@@ -1,23 +1,17 @@
 package com.example.errorfreetext.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.UUID;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateTaskResponse {
 
     private UUID id;
-
-    public CreateTaskResponse() {
-    }
-
-    public CreateTaskResponse(UUID id) {
-        this.id = id;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
 }

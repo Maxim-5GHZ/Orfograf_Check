@@ -1,5 +1,6 @@
 package com.example.errorfreetext.service;
 
+import com.example.errorfreetext.exception.NotFoundException;
 import com.example.errorfreetext.models.Task;
 import com.example.errorfreetext.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,5 +24,11 @@ public class TaskService {
         task = taskRepository.save(task);
         log.info("created task {}", task.getId());
         return task.getId();
+    }
+
+    @Transactional(readOnly = true)
+    public Task getById(UUID id) {
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Task with id: " + id + " not found"));
     }
 }

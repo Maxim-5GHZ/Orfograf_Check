@@ -1,13 +1,13 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/error_free_text
-    username: postgres
-    password: postgres
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/error_free_text}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: ${DB_DDL_AUTO:update}
+    show-sql: ${JPA_SHOW_SQL:false}
     properties:
       hibernate:
         format_sql: true
@@ -15,11 +15,11 @@ spring:
 
 logging:
   level:
-    com.example.errorfreetext: INFO
+    com.example.errorfreetext: ${APP_LOG_LEVEL:INFO}
 
 yandex:
   speller:
     url: ${YANDEX_SPELLER_URL:https://speller.yandex.net/services/spellservice.json/checkTexts}
 
 scheduler:
-  interval-ms: 5000
+  interval-ms: ${SCHEDULER_INTERVAL_MS:5000}
