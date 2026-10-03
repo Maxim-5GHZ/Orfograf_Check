@@ -28,6 +28,21 @@ public class SpellerClient {
         return check(text, language, options);
     }
 
+    // основной метод: нарезаем длинный текст, правим каждый кусок и склеиваем обратно
+    public String correct(String text, String language) {
+        // options один на весь текст, как и написано в тз
+        int options = SpellerOptionsResolver.resolve(text);
+        List<String> chunks = TextChunker.chunk(text);
+        log.debug("correcting text length {} in {} chunks", text.length(), chunks.size());
+
+        StringBuilder result = new StringBuilder();
+        for (String chunk : chunks) {
+            List<SpellerError> errors = check(chunk, language, options);
+            result.append(CorrectionApplier.apply(chunk, errors));
+        }
+        return result.toString();
+    }
+
     public List<SpellerError> check(String text, String language, int options) {
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         form.add("text", text);
