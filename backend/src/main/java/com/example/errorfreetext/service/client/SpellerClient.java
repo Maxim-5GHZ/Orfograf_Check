@@ -22,13 +22,19 @@ public class SpellerClient {
     @Value("${yandex.speller.url}")
     private String url;
 
-    
+    // отдаляем текст яндексу, options считаем на месте по тексту
     public List<SpellerError> check(String text, String language) {
+        int options = SpellerOptionsResolver.resolve(text);
+        return check(text, language, options);
+    }
+
+    public List<SpellerError> check(String text, String language, int options) {
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         form.add("text", text);
         form.add("lang", language);
+        form.add("options", String.valueOf(options));
 
-        log.debug("calling yandex speller, text length {}", text.length());
+        log.debug("calling yandex speller, text length {}, options {}", text.length(), options);
 
         List<List<SpellerError>> response = restClient.post()
                 .uri(url)
