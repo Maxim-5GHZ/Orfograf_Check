@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-// то что отдаем по GET, correctedText пока null пока задача не готова
+// то что отдаем по GET
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,3 +24,5 @@ public class TaskResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
+
+

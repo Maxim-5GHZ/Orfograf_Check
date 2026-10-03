@@ -5,6 +5,8 @@ import com.example.errorfreetext.dto.CreateTaskResponse;
 import com.example.errorfreetext.dto.TaskResponse;
 import com.example.errorfreetext.models.Task;
 import com.example.errorfreetext.service.TaskService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import java.util.UUID;
 
 
 // тут только http: забрали json, отдали json. никакой бизнес-логики
+@Tag(name = "tasks")
 @RestController
 @RequestMapping("/api/v1/tasks")
 public class TaskController {
@@ -29,12 +32,14 @@ public class TaskController {
         this.taskService = taskService;
     }
 
+    @Operation(summary = "Создать задачу на исправление текста")
     @PostMapping
     public ResponseEntity<CreateTaskResponse> create(@Valid @RequestBody CreateTaskRequest request) {
         UUID id = taskService.create(request.getText(), request.getLanguage());
         return ResponseEntity.status(HttpStatus.CREATED).body(new CreateTaskResponse(id));
     }
 
+    @Operation(summary = "Получить задачу по id")
     @GetMapping("/{id}")
     public ResponseEntity<TaskResponse> getById(@PathVariable UUID id) {
         Task task = taskService.getById(id);
