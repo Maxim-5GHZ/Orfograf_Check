@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/error_free_text
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+logging:
+  level:
+    com.example.errorfreetext: INFO
+
+yandex:
+  speller:
+    url: ${YANDEX_SPELLER_URL:https://speller.yandex.net/services/spellservice.json/checkTexts}
+
+scheduler:
+  interval-ms: 5000
