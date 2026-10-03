@@ -20,7 +20,8 @@ public class TaskService {
     
     @Transactional
     public UUID create(String text, String language) {
-        Task task = new Task(text, language);
+        // язык приводим к нижнему регистру, чтобы в базу не лезло RU и ru разными строками
+        Task task = new Task(text, language.toLowerCase());
         task = taskRepository.save(task);
         log.info("created task {}", task.getId());
         return task.getId();

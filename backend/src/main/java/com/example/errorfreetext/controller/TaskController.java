@@ -5,6 +5,7 @@ import com.example.errorfreetext.dto.CreateTaskResponse;
 import com.example.errorfreetext.dto.TaskResponse;
 import com.example.errorfreetext.models.Task;
 import com.example.errorfreetext.service.TaskService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +30,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<CreateTaskResponse> create(@RequestBody CreateTaskRequest request) {
+    public ResponseEntity<CreateTaskResponse> create(@Valid @RequestBody CreateTaskRequest request) {
         UUID id = taskService.create(request.getText(), request.getLanguage());
         return ResponseEntity.status(HttpStatus.CREATED).body(new CreateTaskResponse(id));
     }
