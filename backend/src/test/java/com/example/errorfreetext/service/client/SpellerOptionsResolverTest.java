@@ -9,36 +9,36 @@ class SpellerOptionsResolverTest {
     @Test
     void plainTextOnlyBaseOptions() {
         int options = SpellerOptionsResolver.resolve("обычный текст без ничего");
-        assertEquals(520, options);
+        assertEquals(0, options);
     }
 
     @Test
     void digitsAddIgnoreDigits() {
         int options = SpellerOptionsResolver.resolve("пароль 123");
-        assertEquals(522, options);
+        assertEquals(2, options);
     }
 
     @Test
     void urlAddIgnoreUrls() {
         int options = SpellerOptionsResolver.resolve("смотри https://ya.ru");
-        assertEquals(524, options);
+        assertEquals(4, options);
     }
 
     @Test
     void digitsAndUrlTogether() {
         int options = SpellerOptionsResolver.resolve("http://example.com 42");
-        assertEquals(526, options);
+        assertEquals(6, options);
     }
 
     @Test
     void digitsOnNextLineStillCounted() {
         int options = SpellerOptionsResolver.resolve("текст\nещё 7 цифр");
-        assertEquals(522, options);
+        assertEquals(2, options);
     }
 
     @Test
     void wwwUrlDetected() {
         int options = SpellerOptionsResolver.resolve("заходи на www.example.com");
-        assertEquals(524, options);
+        assertEquals(4, options);
     }
 }

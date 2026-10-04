@@ -43,16 +43,38 @@ public class TaskController {
     @GetMapping("/{id}")
     public ResponseEntity<TaskResponse> getById(@PathVariable UUID id) {
         Task task = taskService.getById(id);
-        TaskResponse body = new TaskResponse(
-                task.getId(),
-                task.getStatus().name(),
-                task.getLanguage(),
-                task.getOriginalText(),
-                task.getCorrectedText(),
-                task.getErrorMessage(),
-                task.getCreatedAt(),
-                task.getUpdatedAt()
-        );
+        // строго по ТЗ:
+        // завершена -> статус + скорректированный текст,
+        // ошибка -> статус + описание ошибки,
+        // в процессе/новая -> только статус
+        TaskResponse body;
+        switch (task.getStatus()) {
+            case COMPLETED -> body = new TaskResponse(
+                    task.getId(),
+                    task.getStatus().name(),
+                    task.getLanguage(),
+                    task.getOriginalText(),
+                    task.getCorrectedText(),
+                    null,
+                    task.getCreatedAt(),
+                    task.getUpdatedAt()
+            );
+            case FAILED -> body = new TaskResponse(
+                    task.getId(),
+                    task.getStatus().name(),
+                    task.getLanguage(),
+                    task.getOriginalText(),
+                    null,
+                    task.getErrorMessage(),
+                    task.getCreatedAt(),
+                    task.getUpdatedAt()
+            );
+            default -> body = new TaskResponse(
+                    task.getId(),
+                    task.getStatus().name(),
+                    null, null, null, null, null, null
+            );
+        }
         return ResponseEntity.ok(body);
     }
 }

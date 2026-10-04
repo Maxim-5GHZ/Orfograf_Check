@@ -20,6 +20,7 @@ public class CreateTaskRequest {
     @Pattern(regexp = "(?s).*\\p{L}.*", message = "text must contain letters")
     private String text;
 
+    @NotBlank(message = "language must not be blank")
     @Pattern(regexp = "(?i)ru|en", message = "language must be ru or en")
     private String language;
 }

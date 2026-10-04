@@ -30,7 +30,9 @@ public final class SpellerOptionsResolver {
     }
 
     public static int resolve(String text) {
-        int options = FIND_REPEAT_WORDS | IGNORE_CAPITALIZATION;
+        // строго по ТЗ: FIND_REPEAT_WORDS и IGNORE_CAPITALIZATION всегда выключены,
+        // включаем только IGNORE_DIGITS / IGNORE_URLS при наличии цифр / URL
+        int options = 0;
 
         if (DIGITS.matcher(text).matches()) {
             options |= IGNORE_DIGITS;

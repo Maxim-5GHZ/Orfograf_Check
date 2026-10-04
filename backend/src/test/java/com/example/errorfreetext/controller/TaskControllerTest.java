@@ -1,6 +1,8 @@
 package com.example.errorfreetext.controller;
 
 import com.example.errorfreetext.exception.NotFoundException;
+import com.example.errorfreetext.models.Task;
+import com.example.errorfreetext.models.TaskStatus;
 import com.example.errorfreetext.service.TaskService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +51,7 @@ class TaskControllerTest {
                         .content("{\"text\":\"аб\",\"language\":\"ru\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorCode").value(40001))
-                .andExpect(jsonPath("$.path").value("/api/v1/tasks"))
+                .andExpect(jsonPath("$.path").value("tasks"))
                 .andExpect(jsonPath("$.errorMessage").value("text: text must be at least 3 characters"));
     }
 
@@ -91,6 +93,68 @@ class TaskControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.errorCode").value(40401))
                 .andExpect(jsonPath("$.errorMessage").value("Task with id: " + id + " not found"))
-                .andExpect(jsonPath("$.path").value("/api/v1/tasks/" + id));
+                .andExpect(jsonPath("$.path").value("tasks"));
+    }
+
+    @Test
+    void missingLanguageRejected() throws Exception {
+        mockMvc.perform(post("/api/v1/tasks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"text\":\"обычный текст\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value(40001))
+                .andExpect(jsonPath("$.path").value("tasks"));
+    }
+
+    @Test
+    void invalidUuidReturns400InTzFormat() throws Exception {
+        mockMvc.perform(get("/api/v1/tasks/not-a-uuid"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value(40001))
+                .andExpect(jsonPath("$.path").value("tasks"));
+    }
+
+    @Test
+    void processingTaskReturnsOnlyStatus() throws Exception {
+        UUID id = UUID.randomUUID();
+        Task task = new Task("Превет мир", "ru");
+        task.setStatus(TaskStatus.PROCESSING);
+        when(taskService.getById(id)).thenReturn(task);
+
+        mockMvc.perform(get("/api/v1/tasks/" + id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("PROCESSING"))
+                .andExpect(jsonPath("$.correctedText").doesNotExist())
+                .andExpect(jsonPath("$.errorMessage").doesNotExist());
+    }
+
+    @Test
+    void completedTaskReturnsCorrectedText() throws Exception {
+        UUID id = UUID.randomUUID();
+        Task task = new Task("Превет мир", "ru");
+        task.setStatus(TaskStatus.COMPLETED);
+        task.setCorrectedText("Привет мир");
+        when(taskService.getById(id)).thenReturn(task);
+
+        mockMvc.perform(get("/api/v1/tasks/" + id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("COMPLETED"))
+                .andExpect(jsonPath("$.correctedText").value("Привет мир"))
+                .andExpect(jsonPath("$.errorMessage").doesNotExist());
+    }
+
+    @Test
+    void failedTaskReturnsErrorMessage() throws Exception {
+        UUID id = UUID.randomUUID();
+        Task task = new Task("Превет мир", "ru");
+        task.setStatus(TaskStatus.FAILED);
+        task.setErrorMessage("yandex unavailable");
+        when(taskService.getById(id)).thenReturn(task);
+
+        mockMvc.perform(get("/api/v1/tasks/" + id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("FAILED"))
+                .andExpect(jsonPath("$.errorMessage").value("yandex unavailable"))
+                .andExpect(jsonPath("$.correctedText").doesNotExist());
     }
 }
