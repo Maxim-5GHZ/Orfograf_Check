@@ -36,7 +36,7 @@ springdoc (`springdoc-openapi-starter-webmvc-ui:2.7.0`, конфиг — `OpenAp
 Контроллер помечен `@Tag(name = "tasks")`, методы — `@Operation` (`POST` — "Создать задачу на исправление текста", `GET` — "Получить задачу по id").
 
 ## API
-Orfograf_Check / 
+
 ### 1. Создать задачу
 
 `POST /api/v1/tasks` → `201` + `{ "id": "uuid" }`
